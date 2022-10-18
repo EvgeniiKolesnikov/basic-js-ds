@@ -18,8 +18,6 @@ class Node {
 class BinarySearchTree {
   constructor() {
     this.rootNode = null;
-    // this.left = null;
-    // this.right = null;
   }
 
   root() {
@@ -27,36 +25,34 @@ class BinarySearchTree {
   }
 
   add(data) {
-    const node = new Node(data);
-    let isAdd = false;
-
+    const node = (data instanceof Node) ? data : new Node(data);
     if (this.rootNode === null) {
       this.rootNode = node;
       return;
     }
+    
+    if (data === null) return;
 
-    // console.log('node =', node);
     let currentNode = this.rootNode;
-
-    while (!isAdd) {
+    while (true) {
       if (node.data > currentNode.data) {
         if (currentNode.right === null) {
           currentNode.right = node;
-          isAdd = true;
+          break;
         } else {
           currentNode = currentNode.right;
         }
       } else if (node.data < currentNode.data) {
         if (currentNode.left === null) {
           currentNode.left = node;
-          isAdd = true;
+          break;
         } else {
           currentNode = currentNode.left;
         }
       }
     }
 
-    console.log('this.root =', this.rootNode);
+    // console.log('this.root =', this.rootNode);
   }
 
   has(data) {
@@ -80,7 +76,7 @@ class BinarySearchTree {
 
   find(data) {
     let currentNode = this.rootNode;
-    
+
     while (true) {
       if (currentNode === null) {
         return null;
@@ -98,33 +94,46 @@ class BinarySearchTree {
   }
 
   remove(data) {
-    // if (this.has(data)) {
-      
-    // }
     let currentNode = this.rootNode;
-    
+    let delNode = null;
+    let rNode = null;
+    let lNode = null;
+
+    if (data === this.rootNode.data){ 
+      rNode = this.rootNode.right;
+      lNode = this.rootNode.left;
+      this.rootNode = rNode;
+      if (lNode) this.add(lNode);
+      return;
+    }
+
     while (true) {
-      if (currentNode === null) {
-        return;
-      }
-
-      if (data === currentNode.data) {
-        return currentNode;
-      }
-
+      if (currentNode === null) return;
       if (data > currentNode.data) {
-        if (currentNode.right === data) {
-          currentNode.right = data.right
+        if (currentNode.right.data === data) { 
+          delNode = currentNode.right;
+          rNode = delNode.right;
+          lNode = delNode.left;
+          currentNode.right = null;
+
+          if (rNode) this.add(rNode);
+          if (lNode) this.add(lNode);
           return;
-        }
+        } 
         currentNode = currentNode.right;
       } else if (data < currentNode.data) {
-        if (currentNode.left === data) {
-          currentNode.left = data.left
+        if (currentNode.left.data === data) { 
+          delNode = currentNode.left;
+          rNode = delNode.right;
+          lNode = delNode.left;
+          currentNode.left = null;
+
+          if (rNode) this.add(rNode);
+          if (lNode) this.add(lNode);
           return;
         }
         currentNode = currentNode.left;
-      }
+      }  
     }
   }
 
